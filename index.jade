@@ -1,0 +1,45 @@
+doctype html
+html(ng-app="app")
+    head
+        title Teptavl（てぷたぶる）
+        meta(charset="UTF-8")
+
+        link(rel="stylesheet" href="css/default/easyui.css")
+        link(rel="stylesheet" href="css/icon.css")
+        link(rel="stylesheet" href="css/style.css")
+
+        script(src="js/jquery-2.1.0.min.js")
+        script(src="js/jquery.easyui.min.js")
+        script(src="js/angular.min.js")
+        script(src="js/angular-cookies.min.js")
+        script(src="js/angular-local-storage.min.js")
+        script(src="js/mutate.events.js")
+        script(src="js/mutate.min.js")
+        script(src="js/script.js")
+
+    body(ng-controller="TeptavlCtrl")
+
+        div(window x=0 y=240 width=160 height=64 title="PL名")
+            input#playerName(type="text" ng-model="playerName" fit-parent style="margin: 0px")
+
+        div(window x=0 y=304 width=160 height=160 title="PL達")
+            div(layout)
+                div.lines(data-options="region: 'center'")
+                    p.line(ng-repeat="(id, name) in playerNames") {{name}}
+
+        div(ng-repeat="(windowName, windowData) in windows" window x="{{320 * $index}}" y=0 width=320 height=240 title="{{windowName}}")
+            div(layout ng-if="windowName != 'システム'")
+                div.lines(data-options="region: 'center'" auto-scroll)
+                    p.line(ng-repeat="line in windowData.lines") {{line.item}}
+
+                div(data-options="region:'south', split:true" style='height:48px')
+                    div(layout)
+                        div(data-options="region: 'center'")
+                            textarea.input(fit-parent ng-model="windowData.input" ng-keyup="updateInput(windowName, $event.target.value)")
+
+                        div(data-options="region: 'east', split: true" style="width: 64px")
+                            button.send(fit-parent ng-click="send(windowName)") 送信
+
+            div(layout ng-if="windowName == 'システム'")
+                div.lines(data-options="region: 'center'" auto-scroll)
+                    p.line(ng-repeat="line in windowData.lines") {{line.item}}

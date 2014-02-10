@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title>Teptavl（てぷたぶる）</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/default/easyui.css">
+    <link rel="stylesheet" href="css/icon.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-2.1.0.min.js"></script>
+    <script src="js/jquery.easyui.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-cookies.min.js"></script>
+    <script src="js/angular-local-storage.min.js"></script>
+    <script src="js/mutate.events.js"></script>
+    <script src="js/mutate.min.js"></script>
+    <script src="js/script.js"></script>
+  </head>
+  <body ng-controller="TeptavlCtrl">
+    <div window x="0" y="240" width="160" height="64" title="PL名">
+      <input id="playerName" type="text" ng-model="playerName" fit-parent style="margin: 0px">
+    </div>
+    <div window x="0" y="304" width="160" height="160" title="PL達">
+      <div layout>
+        <div data-options="region: 'center'" class="lines">
+          <p ng-repeat="(id, name) in playerNames" class="line">{{name}}</p>
+        </div>
+      </div>
+    </div>
+    <div ng-repeat="(windowName, windowData) in windows" window x="{{320 * $index}}" y="0" width="320" height="240" title="{{windowName}}">
+      <div layout ng-if="windowName != 'システム'">
+        <div data-options="region: 'center'" auto-scroll class="lines">
+          <p ng-repeat="line in windowData.lines" class="line">{{line.item}}</p>
+        </div>
+        <div data-options="region:'south', split:true" style="height:48px">
+          <div layout>
+            <div data-options="region: 'center'">
+              <textarea fit-parent ng-model="windowData.input" ng-keyup="updateInput(windowName, $event.target.value)" class="input"></textarea>
+            </div>
+            <div data-options="region: 'east', split: true" style="width: 64px">
+              <button fit-parent ng-click="send(windowName)" class="send">送信</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div layout ng-if="windowName == 'システム'">
+        <div data-options="region: 'center'" auto-scroll class="lines">
+          <p ng-repeat="line in windowData.lines" class="line">{{line.item}}</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
