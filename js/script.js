@@ -114,15 +114,10 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService) {
 
 function bind($scope, localStorageService, variable, defaultValue)
 {
-    if (localStorageService.get(variable))
-    {
-        console.log(localStorageService.get(variable));
-        $scope[variable] = localStorageService.get(variable);
-    }
-    else
+    $scope[variable] = localStorageService.get(variable);
+    if ($scope[variable] == null)
     {
         $scope[variable] = defaultValue;
-        localStorageService.add(variable, defaultValue);
     }
 
     $scope.$watch(variable, function(value) {
