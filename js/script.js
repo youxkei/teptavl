@@ -3,23 +3,17 @@ var app = angular.module('app', ["LocalStorageModule"]);
 app.factory('TeptavlService', function() {
     var service = {};
 
-    service.socket = new WebSocket('ws://localhost:8864/');
-    service.socket.onmessage = function(message) {
+    var socket = new WebSocket('ws://localhost:8864');
+    socket.onmessage = function(message) {
         service.onmessage(JSON.parse(message.data));
     };
-    service.socket.onopen = function() {
+    socket.onopen = function() {
         service.onopen();
     }
 
     service.send = function(message) {
-        service.socket.send(JSON.stringify(message));
+        socket.send(JSON.stringify(message));
     }
-
-    $(function() {
-        $(window).on("unload", function() {
-            service.onclose();
-        });
-    });
 
     service.id = Math.random().toString();
 
@@ -28,11 +22,19 @@ app.factory('TeptavlService', function() {
 
 app.directive('window', function() {
     return function(scope, element, attr) {
-        element.window({ width: +attr.width,
-                        height: +attr.height,
-                          left: +attr.x,
-                           top: +attr.y,
-                         title: attr.title });
+        var windowInfo = scope.$eval(attr.window);
+        element.window({ title: windowInfo.title,
+                      closable: false,
+                        shadow: false,
+                        inline: true,
+                   minimizable: false,
+                         width: windowInfo.layout.width,
+                        height: windowInfo.layout.height,
+                          left: windowInfo.layout.x,
+                           top: windowInfo.layout.y,
+                         title: windowInfo.title,
+                        onMove: function(left, top) { windowInfo.layout.x = left; windowInfo.layout.y = top; },
+                      onResize: function(width, height) { windowInfo.layout.width = width; windowInfo.layout.height = height; }});
     };
 });
 
@@ -41,12 +43,6 @@ app.directive('layout', function() {
         element.layout({ fit: true })
     };
 });
-
-app.directive("datagrid", function() {
-    return function(scope, element, attr) {
-        element.datagrid({ fitColumns:true });
-    }
-})
 
 app.directive('fitParent', function() {
     return function(scope, element, attr) {
@@ -78,7 +74,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService) {
     $scope.windows = {system: {title: "システム", lines: [],            layout: {x:   0, y:   0, width: 256, height: 256}},
                         main: {title: "メイン",   lines: [], input: "", layout: {x: 256, y:   0, width: 256, height: 256}},
                          sub: {title: "サブ",     lines: [], input: "", layout: {x: 512, y:   0, width: 256, height: 256}},
-                      player: {title: "PL名",     name: "名無し",       layout: {x: 0,   y: 256, width: 128, height: 64}},
+                      player: {title: "PL名",     name: "ななしな",     layout: {x: 0,   y: 256, width: 128, height: 64}},
                      players: {title: "PL達",     names: {},            layout: {x: 0,   y: 320, width: 128, height: 256}}};
 
     loadFromStorage($scope, localStorageService);
@@ -109,19 +105,26 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService) {
         });
     };
 
-    $scope.onclose = function() {
-        saveToStorage($scope, localStorageService);
-    }
-
     $scope.updateInput = function(windowName, value) {
     }
+
+    $(function() {
+        $(window).on("unload", function() {
+            saveToStorage($scope, localStorageService);
+        });
+    });
 }
 
 
 
 function loadFromStorage($scope, localStorageService) {
-    var windowLayouts = localStorageService.get("windowLayouts");
+    var playerName = localStorageService.get("playerName");
+    if (playerName !== null)
+    {
+        $scope.windows.player.name = playerName;
+    }
 
+    var windowLayouts = localStorageService.get("windowLayouts");
     if (windowLayouts !== null)
     {
         for(key in $scope.windows)
@@ -142,4 +145,5 @@ function saveToStorage($scope, localStorageService) {
     }
 
     localStorageService.add("windowLayouts", windowLayouts);
+    localStorageService.add("playerName",    $scope.windows.player.name);
 }

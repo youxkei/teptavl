@@ -16,15 +16,15 @@
     <script src="js/script.js"></script>
   </head>
   <body ng-controller="TeptavlCtrl">
-    <div ng-repeat="(key, window) in windows" window x="{{window.layout.x}}" y="{{window.layout.y}}" width="{{window.layout.width}}" height="{{window.layout.height}}" title="{{window.title}}">
+    <div ng-repeat="(key, windowInfo) in windows" window="windowInfo">
       <div layout ng-if="key === 'main' || key === 'sub'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in window.lines" class="line">{{line.item}}</p>
+          <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
         </div>
         <div data-options="region:'south', split:true" style="height:48px">
           <div layout>
             <div data-options="region: 'center'">
-              <textarea fit-parent ng-model="window.input" ng-keyup="updateInput(key, $event.target.value)" class="input"></textarea>
+              <textarea fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event.target.value)" class="input"></textarea>
             </div>
             <div data-options="region: 'east', split: true" style="width: 64px">
               <button fit-parent ng-click="send(key)" class="send">送信</button>
@@ -34,17 +34,17 @@
       </div>
       <div layout ng-if="key === 'system'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in window.lines" class="line">{{line.item}}</p>
+          <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
         </div>
       </div>
       <div layout ng-if="key === 'player'">
         <div data-options="region: 'center'">
-          <input id="playerName" type="text" ng-model="window.name" fit-parent style="margin: 0px">
+          <input id="playerName" type="text" ng-model="windowInfo.name" fit-parent style="margin: 0px">
         </div>
       </div>
       <div layout ng-if="key === 'players'">
         <div data-options="region: 'center'" class="lines">
-          <p ng-repeat="(id, name) in window.names" class="line">{{name}}</p>
+          <p ng-repeat="(id, name) in windowInfo.names" class="line">{{name}}</p>
         </div>
       </div>
     </div>

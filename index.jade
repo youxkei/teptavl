@@ -19,27 +19,27 @@ html(ng-app="app")
 
     body(ng-controller="TeptavlCtrl")
 
-        div(ng-repeat="(key, window) in windows" window x="{{window.layout.x}}" y="{{window.layout.y}}" width="{{window.layout.width}}" height="{{window.layout.height}}" title="{{window.title}}")
+        div(ng-repeat="(key, windowInfo) in windows" window="windowInfo")
             div(layout ng-if="key === 'main' || key === 'sub'")
                 div.lines(data-options="region: 'center'" auto-scroll)
-                    p.line(ng-repeat="line in window.lines") {{line.item}}
+                    p.line(ng-repeat="line in windowInfo.lines") {{line.item}}
 
                 div(data-options="region:'south', split:true" style='height:48px')
                     div(layout)
                         div(data-options="region: 'center'")
-                            textarea.input(fit-parent ng-model="window.input" ng-keyup="updateInput(key, $event.target.value)")
+                            textarea.input(fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event.target.value)")
 
                         div(data-options="region: 'east', split: true" style="width: 64px")
                             button.send(fit-parent ng-click="send(key)") 送信
 
             div(layout ng-if="key === 'system'")
                 div.lines(data-options="region: 'center'" auto-scroll)
-                    p.line(ng-repeat="line in window.lines") {{line.item}}
+                    p.line(ng-repeat="line in windowInfo.lines") {{line.item}}
 
             div(layout ng-if="key === 'player'")
                 div(data-options="region: 'center'")
-                    input#playerName(type="text" ng-model="window.name" fit-parent style="margin: 0px")
+                    input#playerName(type="text" ng-model="windowInfo.name" fit-parent style="margin: 0px")
 
             div(layout ng-if="key === 'players'")
                 div.lines(data-options="region: 'center'")
-                    p.line(ng-repeat="(id, name) in window.names") {{name}}
+                    p.line(ng-repeat="(id, name) in windowInfo.names") {{name}}
