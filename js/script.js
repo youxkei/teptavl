@@ -15,6 +15,12 @@ app.factory('TeptavlService', function() {
         service.socket.send(JSON.stringify(message));
     }
 
+    $(function() {
+        $(window).on("unload", function() {
+            service.onclose();
+        });
+    });
+
     service.id = Math.random().toString();
 
     return service;
@@ -73,7 +79,9 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService) {
                         main: {title: "メイン",   lines: [], input: "", layout: {x: 256, y:   0, width: 256, height: 256}},
                          sub: {title: "サブ",     lines: [], input: "", layout: {x: 512, y:   0, width: 256, height: 256}},
                       player: {title: "PL名",     name: "名無し",       layout: {x: 0,   y: 256, width: 128, height: 64}},
-                     players: {title: "PL達",     names: {},            layout: {x: 0,   y: 384, width: 128, height: 256}}};
+                     players: {title: "PL達",     names: {},            layout: {x: 0,   y: 320, width: 128, height: 256}}};
+
+    loadFromStorage($scope, localStorageService);
 
     TeptavlService.onmessage = function(message) {
         $scope.windows.players.names[message.id] = message.playerName;
@@ -101,6 +109,37 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService) {
         });
     };
 
+    $scope.onclose = function() {
+        saveToStorage($scope, localStorageService);
+    }
+
     $scope.updateInput = function(windowName, value) {
     }
+}
+
+
+
+function loadFromStorage($scope, localStorageService) {
+    var windowLayouts = localStorageService.get("windowLayouts");
+
+    if (windowLayouts !== null)
+    {
+        for(key in $scope.windows)
+        {
+            $scope.windows[key].layout = windowLayouts[key];
+        }
+    }
+}
+
+
+
+function saveToStorage($scope, localStorageService) {
+    var windowLayouts = {};
+
+    for(key in $scope.windows)
+    {
+        windowLayouts[key] = $scope.windows[key].layout;
+    }
+
+    localStorageService.add("windowLayouts", windowLayouts);
 }
