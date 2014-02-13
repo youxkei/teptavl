@@ -16,35 +16,35 @@
     <script src="js/script.js"></script>
   </head>
   <body ng-controller="TeptavlCtrl">
-    <div window x="0" y="240" width="160" height="64" title="PL名">
-      <input id="playerName" type="text" ng-model="playerName" fit-parent style="margin: 0px">
-    </div>
-    <div window x="0" y="304" width="160" height="160" title="PL達">
-      <div layout>
-        <div data-options="region: 'center'" class="lines">
-          <p ng-repeat="(id, name) in playerNames" class="line">{{name}}</p>
-        </div>
-      </div>
-    </div>
-    <div ng-repeat="(windowName, windowData) in windows" window x="{{320 * $index}}" y="0" width="320" height="240" title="{{windowName}}">
-      <div layout ng-if="windowName != 'システム'">
+    <div ng-repeat="(key, window) in windows" window x="{{window.layout.x}}" y="{{window.layout.y}}" width="{{window.layout.width}}" height="{{window.layout.height}}" title="{{window.title}}">
+      <div layout ng-if="key === 'main' || key === 'sub'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in windowData.lines" class="line">{{line.item}}</p>
+          <p ng-repeat="line in window.lines" class="line">{{line.item}}</p>
         </div>
         <div data-options="region:'south', split:true" style="height:48px">
           <div layout>
             <div data-options="region: 'center'">
-              <textarea fit-parent ng-model="windowData.input" ng-keyup="updateInput(windowName, $event.target.value)" class="input"></textarea>
+              <textarea fit-parent ng-model="window.input" ng-keyup="updateInput(key, $event.target.value)" class="input"></textarea>
             </div>
             <div data-options="region: 'east', split: true" style="width: 64px">
-              <button fit-parent ng-click="send(windowName)" class="send">送信</button>
+              <button fit-parent ng-click="send(key)" class="send">送信</button>
             </div>
           </div>
         </div>
       </div>
-      <div layout ng-if="windowName == 'システム'">
+      <div layout ng-if="key === 'system'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in windowData.lines" class="line">{{line.item}}</p>
+          <p ng-repeat="line in window.lines" class="line">{{line.item}}</p>
+        </div>
+      </div>
+      <div layout ng-if="key === 'player'">
+        <div data-options="region: 'center'">
+          <input id="playerName" type="text" ng-model="window.name" fit-parent style="margin: 0px">
+        </div>
+      </div>
+      <div layout ng-if="key === 'players'">
+        <div data-options="region: 'center'" class="lines">
+          <p ng-repeat="(id, name) in window.names" class="line">{{name}}</p>
         </div>
       </div>
     </div>

@@ -66,61 +66,41 @@ app.config(["localStorageServiceProvider", function(localStorageServiceProvider)
     localStorageServiceProvider.setPrefix("teptavl");
 }]);
 
+
+
 function TeptavlCtrl($scope, localStorageService, TeptavlService) {
-    bind($scope, localStorageService, "playerName", "名無し");
-    $scope.playerNames = {};
-    $scope.windows = {システム: {lines: [], input: ""},
-                        メイン: {lines: [], input: ""},
-                          サブ: {lines: [], input: ""}};
-    $scope.messages = [];
+    $scope.windows = {system: {title: "システム", lines: [],            layout: {x:   0, y:   0, width: 256, height: 256}},
+                        main: {title: "メイン",   lines: [], input: "", layout: {x: 256, y:   0, width: 256, height: 256}},
+                         sub: {title: "サブ",     lines: [], input: "", layout: {x: 512, y:   0, width: 256, height: 256}},
+                      player: {title: "PL名",     name: "名無し",       layout: {x: 0,   y: 256, width: 128, height: 64}},
+                     players: {title: "PL達",     names: {},            layout: {x: 0,   y: 384, width: 128, height: 256}}};
 
     TeptavlService.onmessage = function(message) {
-        $scope.playerNames[message.id] = message.playerName;
+        $scope.windows.players.names[message.id] = message.playerName;
 
         if (message.line)
         {
-            $scope.windows[message.windowName].lines.push({'item': message.line});
+            $scope.windows[message.window].lines.push({'item': message.line});
         }
 
         $scope.$apply();
     };
 
     TeptavlService.onopen = function() {
-        TeptavlService.send({windowName: "システム",
-                                     id: TeptavlService.id,
-                             playerName: $scope.playerName,
-                                   line: "《" + $scope.playerName + "》がログインしました"});
-
-        $scope.$watch("playerName", function(newValue, oldValue) {
-            if (newValue != oldValue)
-            {
-                TeptavlService.send({windowName: "システム",
-                                             id: TeptavlService.id,
-                                     playerName: $scope.playerName,
-                                           line: ""});
-            }
-        });
+        TeptavlService.send({window: "system",
+                                 id: TeptavlService.id,
+                         playerName: $scope.windows.player.name,
+                               line: "《" + $scope.windows.player.name + "》がログインしました"});
     }
 
-    $scope.send = function(windowName) {
-        TeptavlService.send({windowName: windowName,
-                                   line: $scope.windows[windowName].input
+    $scope.send = function(window) {
+        TeptavlService.send({window: window,
+                                 id: TeptavlService.id,
+                         playerName: $scope.windows.player.name,
+                               line: $scope.windows[window].input
         });
     };
 
     $scope.updateInput = function(windowName, value) {
     }
-}
-
-function bind($scope, localStorageService, variable, defaultValue)
-{
-    $scope[variable] = localStorageService.get(variable);
-    if ($scope[variable] == null)
-    {
-        $scope[variable] = defaultValue;
-    }
-
-    $scope.$watch(variable, function(value) {
-        localStorageService.add(variable, value);
-    });
 }
