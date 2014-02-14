@@ -3,12 +3,17 @@ var app = angular.module('app', ["LocalStorageModule"]);
 app.factory('TeptavlService', function() {
     var service = {};
 
-    var socket = new WebSocket('ws://localhost:8864');
+    var socket = new WebSocket('ws://153.121.44.200:8864');
     socket.onmessage = function(message) {
         service.onmessage(JSON.parse(message.data));
     };
+
     socket.onopen = function() {
         service.onopen();
+    }
+
+    socket.onclose = function() {
+        alert("close");
     }
 
     service.send = function(message) {
