@@ -1,3 +1,8 @@
+Number.prototype.clamp = function(min, max) {
+    return Math.min(Math.max(this, min), max);
+};
+
+
 var app = angular.module('app', ["LocalStorageModule"]);
 
 app.factory('TeptavlService', function() {
@@ -28,6 +33,9 @@ app.factory('TeptavlService', function() {
 app.directive('window', function() {
     return function(scope, element, attr) {
         var windowInfo = scope.$eval(attr.window);
+        var moveWithoutEvent = false;
+        var resizeWithoutEvent = false;
+
         element.window({ title: windowInfo.title,
                       closable: false,
                         shadow: false,
@@ -38,8 +46,27 @@ app.directive('window', function() {
                           left: windowInfo.layout.x,
                            top: windowInfo.layout.y,
                          title: windowInfo.title,
-                        onMove: function(left, top) { windowInfo.layout.x = left; windowInfo.layout.y = top; },
-                      onResize: function(width, height) { windowInfo.layout.width = width; windowInfo.layout.height = height; }});
+                        onMove: function(left, top) {     if (moveWithoutEvent) return;
+
+                                                          windowInfo.layout.x = left.clamp(0, $(window).width()  - windowInfo.layout.width);
+                                                          windowInfo.layout.y =  top.clamp(0, $(window).height() - windowInfo.layout.height);
+
+                                                          moveWithoutEvent = true;
+                                                          element.window("move", { left: windowInfo.layout.x,
+                                                                                    top: windowInfo.layout.y })
+                                                          moveWithoutEvent = false; },
+
+                      onResize: function(width, height) { if (resizeWithoutEvent) return;
+
+                                                          element.window("move", {});
+                                                          
+                                                          windowInfo.layout.width  =  width.clamp(128, $(window).width());
+                                                          windowInfo.layout.height = height.clamp(0,   $(window).height());
+
+                                                          resizeWithoutEvent = true;
+                                                          element.window("resize", { width: windowInfo.layout.width,
+                                                                                    height: windowInfo.layout.height });
+                                                          resizeWithoutEvent = false; }});
     };
 });
 
