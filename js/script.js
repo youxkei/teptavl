@@ -216,19 +216,41 @@ function loadFromStorage($scope, localStorageService)
             $scope.windows[key].layout = windowLayouts[key];
         }
     }
+
+    var windowInputs = localStorageService.get("windowInputs");
+    if (windowInputs !== null)
+    {
+        for(key in $scope.windows)
+        {
+            if ($scope.windows[key].input !== undefined)
+            {
+                $scope.windows[key].input = windowInputs[key];
+                console.log(windowInputs[key]);
+            }
+        }
+    }
 }
 
 
 
 function saveToStorage($scope, localStorageService)
 {
-    var windowLayouts = {};
+    localStorageService.add("playerName",    $scope.windows.player.name);
 
+    var windowLayouts = {};
     for(key in $scope.windows)
     {
         windowLayouts[key] = $scope.windows[key].layout;
     }
-
     localStorageService.add("windowLayouts", windowLayouts);
-    localStorageService.add("playerName",    $scope.windows.player.name);
+
+    var windowInputs = {};
+    for(key in $scope.windows)
+    {
+        if ($scope.windows[key].input !== undefined)
+        {
+            windowInputs[key] = $scope.windows[key].input;
+        }
+    }
+    localStorageService.add("windowInputs", windowInputs);
 }
