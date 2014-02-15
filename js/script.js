@@ -131,11 +131,11 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
 {
     var se = document.getElementById("se");
 
-    $scope.windows = { system: { title: "システム", lines: [],            layout: { x:   0, y:   0, width: 256, height: 256 } },
-                         main: { title: "メイン",   lines: [], input: "", layout: { x: 256, y:   0, width: 256, height: 256 } },
-                          sub: { title: "サブ",     lines: [], input: "", layout: { x: 512, y:   0, width: 256, height: 256 } },
-                       player: { title: "PL名",     name: "ななしな",     layout: { x: 0,   y: 256, width: 128, height: 64  } },
-                      players: { title: "PL達",     names: {},            layout: { x: 0,   y: 320, width: 128, height: 256 } } };
+    $scope.windows = { system: { title: "システム", lines: [],                        layout: { x:   0, y:   0, width: 256, height: 256 } },
+                         main: { title: "メイン",   lines: [], input: "", typing: {}, layout: { x: 256, y:   0, width: 256, height: 256 } },
+                          sub: { title: "サブ",     lines: [], input: "", typing: {}, layout: { x: 512, y:   0, width: 256, height: 256 } },
+                       player: { title: "PL名",     name: "ななしな",                 layout: { x: 0,   y: 256, width: 128, height: 64  } },
+                      players: { title: "PL達",     names: {},                        layout: { x: 0,   y: 320, width: 128, height: 256 } } };
 
     loadFromStorage($scope, localStorageService);
 
@@ -156,6 +156,16 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         if (message.changeName)
         {
             $scope.windows.players.names[message.id] = message.playerName;
+        }
+
+        if (message.typingStart)
+        {
+            $scope.windows[message.window].typing[message.id] = message.playerName;
+        }
+
+        if (message.typingStop)
+        {
+            delete $scope.windows[message.window].typing[message.id];
         }
 
         if (message.talk)
@@ -193,6 +203,26 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
             keyEvent.preventDefault();
         }
     };
+
+    $scope.inputKeyUp = function(window, keyEvent)
+    {
+        if (keyEvent.target.value !== "")
+        {
+            TeptavlService.send({ typingStart: true,
+                                      trivial: true,
+                                       window: window,
+                                           id: TeptavlService.id,
+                                   playerName: $scope.windows.player.name });
+        }
+        else
+        {
+            TeptavlService.send({ typingStop: true,
+                                     trivial: true,
+                                      window: window,
+                                          id: TeptavlService.id,
+                                  playerName: $scope.windows.player.name });
+        }
+    }
 
     $scope.playerNameKeyUp = function(window, keyEvent)
     {
