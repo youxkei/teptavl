@@ -18,7 +18,8 @@ html(ng-app="app")
         script(src="js/script.js")
 
         audio#se(controls=false preload="auto")
-            source(src="sound/swing.wav")
+            source(src="sound/swing.wav" type="audio/wav")
+            source(src="sound/swing.ogg" type="audio/ogg")
 
     body(ng-controller="TeptavlCtrl")
 
