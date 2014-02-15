@@ -127,6 +127,8 @@ app.config(["localStorageServiceProvider", function(localStorageServiceProvider)
 
 function TeptavlCtrl($scope, localStorageService, TeptavlService)
 {
+    var se = new Audio("sound/swing.wav");
+
     $scope.windows = { system: { title: "システム", lines: [],            layout: { x:   0, y:   0, width: 256, height: 256 } },
                          main: { title: "メイン",   lines: [], input: "", layout: { x: 256, y:   0, width: 256, height: 256 } },
                           sub: { title: "サブ",     lines: [], input: "", layout: { x: 512, y:   0, width: 256, height: 256 } },
@@ -142,6 +144,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         if (message.line)
         {
             $scope.windows[message.window].lines.push({'item': message.line});
+            se.play();
         }
 
         $scope.$apply();
@@ -153,7 +156,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
                                   id: TeptavlService.id,
                           playerName: $scope.windows.player.name,
                                 line: "《" + $scope.windows.player.name + "》がログインしました" });
-    }
+    };
 
     $scope.send = function(window)
     {
