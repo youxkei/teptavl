@@ -141,23 +141,22 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
 
     TeptavlService.onmessage = function(message)
     {
+        if (message.enter)
+        {
+            $scope.windows.players.names[message.id] = message.playerName;
+            $scope.windows.system.lines.push({ item: "IN : " + message.playerName });
+        }
+
         if (message.leave)
         {
             delete $scope.windows.players.names[message.id];
-        }
-        else
-        {
-            $scope.windows.players.names[message.id] = message.playerName;
+            $scope.windows.system.lines.push({ item: "OUT: " + message.playerName });
         }
 
-        if (message.line)
+        if (message.talk)
         {
-            $scope.windows[message.window].lines.push({'item': message.line});
-
-            if (message.window !== "system")
-            {
-                se.play();
-            }
+            $scope.windows[message.window].lines.push({ item: message.playerName + ": " + message.input });
+            se.play();
         }
 
         $scope.$apply();
@@ -165,10 +164,9 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
 
     TeptavlService.onopen = function()
     {
-        TeptavlService.send({ window: "system",
+        TeptavlService.send({  enter: true,
                                   id: TeptavlService.id,
-                          playerName: $scope.windows.player.name,
-                                line: "《" + $scope.windows.player.name + "》がログインしました" });
+                          playerName: $scope.windows.player.name });
     };
 
     $scope.updateInput = function(window, keyEvent)
@@ -177,10 +175,11 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         {
             if ($scope.windows[window].input !== "")
             {
-                TeptavlService.send({ window: window,
-                                          id: TeptavlService.id,
-                                  playerName: $scope.windows.player.name,
-                                        line: $scope.windows.player.name + ": " + $scope.windows[window].input });
+                TeptavlService.send({ talk: true,
+                                    window: window,
+                                        id: TeptavlService.id,
+                                playerName: $scope.windows.player.name,
+                                     input: $scope.windows[window].input });
 
                 $scope.windows[window].input = "";
             }

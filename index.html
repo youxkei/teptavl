@@ -31,7 +31,7 @@
       </div>
       <div layout ng-if="key === 'system'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
+          <pre ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</pre>
         </div>
       </div>
       <div layout ng-if="key === 'player'">
