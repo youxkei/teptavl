@@ -164,6 +164,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
                                   id: TeptavlService.id,
                           playerName: $scope.windows.player.name,
                                 line: $scope.windows[window].input });
+        $scope.windows[window].input = "";
     };
 
     $scope.updateInput = function(windowName, value)
