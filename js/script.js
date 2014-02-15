@@ -155,6 +155,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
 
         if (message.talk)
         {
+            $scope.windows.players.names[message.id] = message.playerName;
             $scope.windows[message.window].lines.push({ item: message.playerName + ": " + message.input });
             se.play();
         }
