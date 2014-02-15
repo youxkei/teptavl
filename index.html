@@ -26,7 +26,7 @@
           <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
         </div>
         <div data-options="region:'south', split:true" style="height:48px">
-          <textarea fit-parent ng-model="windowInfo.input" ng-trim="false" ng-keydown="updateInput(key, $event)" class="input"></textarea>
+          <textarea fit-parent ng-model="windowInfo.input" ng-trim="false" ng-keydown="inputKeyDown(key, $event)" class="input"></textarea>
         </div>
       </div>
       <div layout ng-if="key === 'system'">

@@ -170,7 +170,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
                           playerName: $scope.windows.player.name });
     };
 
-    $scope.updateInput = function(window, keyEvent)
+    $scope.inputKeyDown = function(window, keyEvent)
     {
         if (!keyEvent.altKey && !keyEvent.shiftKey && !keyEvent.ctrlKey && keyEvent.keyCode == 13)
         {
