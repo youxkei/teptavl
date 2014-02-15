@@ -37,7 +37,7 @@ html(ng-app="app")
 
             div(layout ng-if="key === 'player'")
                 div(data-options="region: 'center'")
-                    input.playerName(type="text" ng-model="windowInfo.name" fit-parent)
+                    input.playerName(type="text" fit-parent ng-model="windowInfo.name" ng-keyup="playerNameKeyUp(key, $event)")
 
             div(layout ng-if="key === 'players'")
                 div.lines(data-options="region: 'center'")

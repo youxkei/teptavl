@@ -153,6 +153,11 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
             $scope.windows.system.lines.push({ item: "OUT: " + message.playerName });
         }
 
+        if (message.changeName)
+        {
+            $scope.windows.players.names[message.id] = message.playerName;
+        }
+
         if (message.talk)
         {
             $scope.windows.players.names[message.id] = message.playerName;
@@ -188,6 +193,14 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
             keyEvent.preventDefault();
         }
     };
+
+    $scope.playerNameKeyUp = function(window, keyEvent)
+    {
+        TeptavlService.send({  changeName: true,
+                                  trivial: true,
+                                       id: TeptavlService.id,
+                               playerName: keyEvent.target.value });
+    }
 
     $(function()
     {
@@ -225,7 +238,6 @@ function loadFromStorage($scope, localStorageService)
             if ($scope.windows[key].input !== undefined)
             {
                 $scope.windows[key].input = windowInputs[key];
-                console.log(windowInputs[key]);
             }
         }
     }
