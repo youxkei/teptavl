@@ -9,7 +9,9 @@ app.factory('TeptavlService', function()
 {
     var service = {};
 
-    var socket = new WebSocket('ws://153.121.44.200:8864');
+    var socket = new WebSocket(location.protocol === "file:" ? "ws://localhost:8864"
+                                                             : "ws://153.121.44.200:8864");
+
     socket.onmessage = function(message)
     {
         service.onmessage(JSON.parse(message.data));
@@ -169,22 +171,21 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
                                 line: "《" + $scope.windows.player.name + "》がログインしました" });
     };
 
-    $scope.send = function(window)
-    {
-        TeptavlService.send({ window: window,
-                                  id: TeptavlService.id,
-                          playerName: $scope.windows.player.name,
-                                line: $scope.windows.player.name + ": " + $scope.windows[window].input });
-        $scope.windows[window].input = "";
-
-        $scope.$apply();
-    };
-
     $scope.updateInput = function(window, keyEvent)
     {
-        if (keyEvent.keyCode == 13)
+        if (!keyEvent.altKey && !keyEvent.shiftKey && !keyEvent.ctrlKey && keyEvent.keyCode == 13)
         {
-            $scope.send(window);
+            if ($scope.windows[window].input !== "")
+            {
+                TeptavlService.send({ window: window,
+                                          id: TeptavlService.id,
+                                  playerName: $scope.windows.player.name,
+                                        line: $scope.windows.player.name + ": " + $scope.windows[window].input });
+
+                $scope.windows[window].input = "";
+            }
+
+            keyEvent.preventDefault();
         }
     };
 

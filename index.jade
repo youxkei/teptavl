@@ -29,12 +29,7 @@ html(ng-app="app")
                     p.line(ng-repeat="line in windowInfo.lines") {{line.item}}
 
                 div(data-options="region:'south', split:true" style='height:48px')
-                    div(layout)
-                        div(data-options="region: 'center'")
-                            textarea.input(fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event)")
-
-                        div(data-options="region: 'east', split: true" style="width: 64px")
-                            button.send(fit-parent ng-click="send(key)") 送信
+                    textarea.input(fit-parent ng-model="windowInfo.input" ng-trim="false" ng-keydown="updateInput(key, $event)")
 
             div(layout ng-if="key === 'system'")
                 div.lines(data-options="region: 'center'" auto-scroll)

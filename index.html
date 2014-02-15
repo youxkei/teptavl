@@ -26,14 +26,7 @@
           <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
         </div>
         <div data-options="region:'south', split:true" style="height:48px">
-          <div layout>
-            <div data-options="region: 'center'">
-              <textarea fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event)" class="input"></textarea>
-            </div>
-            <div data-options="region: 'east', split: true" style="width: 64px">
-              <button fit-parent ng-click="send(key)" class="send">送信</button>
-            </div>
-          </div>
+          <textarea fit-parent ng-model="windowInfo.input" ng-trim="false" ng-keydown="updateInput(key, $event)" class="input"></textarea>
         </div>
       </div>
       <div layout ng-if="key === 'system'">
