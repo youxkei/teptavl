@@ -28,7 +28,7 @@
         <div data-options="region:'south', split:true" style="height:48px">
           <div layout>
             <div data-options="region: 'center'">
-              <textarea fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event.target.value)" class="input"></textarea>
+              <textarea fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event)" class="input"></textarea>
             </div>
             <div data-options="region: 'east', split: true" style="width: 64px">
               <button fit-parent ng-click="send(key)" class="send">送信</button>

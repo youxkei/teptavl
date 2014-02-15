@@ -31,7 +31,7 @@ html(ng-app="app")
                 div(data-options="region:'south', split:true" style='height:48px')
                     div(layout)
                         div(data-options="region: 'center'")
-                            textarea.input(fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event.target.value)")
+                            textarea.input(fit-parent ng-model="windowInfo.input" ng-keyup="updateInput(key, $event)")
 
                         div(data-options="region: 'east', split: true" style="width: 64px")
                             button.send(fit-parent ng-click="send(key)") 送信

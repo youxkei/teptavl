@@ -167,8 +167,12 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         $scope.windows[window].input = "";
     };
 
-    $scope.updateInput = function(windowName, value)
+    $scope.updateInput = function(window, keyEvent)
     {
+        if (keyEvent.keyCode == 13)
+        {
+            $scope.send(window);
+        }
     };
 
     $(function()
