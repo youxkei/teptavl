@@ -127,7 +127,7 @@ app.config(["localStorageServiceProvider", function(localStorageServiceProvider)
 
 function TeptavlCtrl($scope, localStorageService, TeptavlService)
 {
-    var se = new Audio("sound/swing.wav");
+    var se = document.getElementById("se");
 
     $scope.windows = { system: { title: "システム", lines: [],            layout: { x:   0, y:   0, width: 256, height: 256 } },
                          main: { title: "メイン",   lines: [], input: "", layout: { x: 256, y:   0, width: 256, height: 256 } },

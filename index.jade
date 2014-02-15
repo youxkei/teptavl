@@ -17,6 +17,9 @@ html(ng-app="app")
         script(src="js/mutate.min.js")
         script(src="js/script.js")
 
+        audio#se(controls=false preload="auto")
+            source(src="sound/swing.wav")
+
     body(ng-controller="TeptavlCtrl")
 
         div(ng-repeat="(key, windowInfo) in windows" window="windowInfo")
