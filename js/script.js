@@ -132,8 +132,8 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
     var se = document.getElementById("se");
 
     $scope.windows = { system: { title: "システム", lines: [],                        layout: { x:   0, y:   0, width: 256, height: 256 } },
-                         main: { title: "メイン",   lines: [], input: "", typing: {}, layout: { x: 256, y:   0, width: 256, height: 256 } },
-                          sub: { title: "サブ",     lines: [], input: "", typing: {}, layout: { x: 512, y:   0, width: 256, height: 256 } },
+                         main: { title: "メイン",   lines: [], input: "", typings: {}, layout: { x: 256, y:   0, width: 256, height: 256 } },
+                          sub: { title: "サブ",     lines: [], input: "", typings: {}, layout: { x: 512, y:   0, width: 256, height: 256 } },
                        player: { title: "PL名",     name: "ななしな",                 layout: { x: 0,   y: 256, width: 128, height: 64  } },
                       players: { title: "PL達",     names: {},                        layout: { x: 0,   y: 320, width: 128, height: 256 } } };
 
@@ -156,22 +156,30 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         if (message.changeName)
         {
             $scope.windows.players.names[message.id] = message.playerName;
+            for (key in $scope.windows)
+            {
+                if ($scope.windows[key].typings !== undefined && $scope.windows[key].typings[message.id] !== undefined)
+                {
+                    $scope.windows[key].typings[message.id] = message.playerName;
+                }
+            }
         }
 
         if (message.typingStart)
         {
-            $scope.windows[message.window].typing[message.id] = message.playerName;
+            $scope.windows[message.window].typings[message.id] = message.playerName;
         }
 
         if (message.typingStop)
         {
-            delete $scope.windows[message.window].typing[message.id];
+            delete $scope.windows[message.window].typings[message.id];
         }
 
         if (message.talk)
         {
             $scope.windows.players.names[message.id] = message.playerName;
             $scope.windows[message.window].lines.push({ item: message.playerName + ": " + message.input });
+            delete $scope.windows[message.window].typings[message.id];
             se.play();
         }
 

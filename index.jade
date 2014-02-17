@@ -27,6 +27,7 @@ html(ng-app="app")
             div(layout ng-if="key === 'main' || key === 'sub'")
                 div.lines(data-options="region: 'center'" auto-scroll)
                     p.line(ng-repeat="line in windowInfo.lines") {{line.item}}
+                    p.line(ng-repeat="(id, name) in windowInfo.typings") {{name}}: ✎...
 
                 div(data-options="region:'south', split:true" style='height:48px')
                     textarea.input(fit-parent ng-model="windowInfo.input" ng-trim="false" ng-keydown="inputKeyDown(key, $event)" ng-keyup="inputKeyUp(key, $event)")
