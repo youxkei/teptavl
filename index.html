@@ -23,7 +23,7 @@
     <div ng-repeat="(key, windowInfo) in windows" window="windowInfo">
       <div layout ng-if="key === 'main' || key === 'sub'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <p ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</p>
+          <p ng-repeat="line in windowInfo.lines" class="line">{{line.name}}: {{line.line}}</p>
           <p ng-repeat="(id, name) in windowInfo.typings" class="line">{{name}}: ✎...</p>
         </div>
         <div data-options="region:'south', split:true" style="height:48px">
@@ -32,7 +32,7 @@
       </div>
       <div layout ng-if="key === 'system'">
         <div data-options="region: 'center'" auto-scroll class="lines">
-          <pre ng-repeat="line in windowInfo.lines" class="line">{{line.item}}</pre>
+          <pre ng-repeat="line in windowInfo.lines" class="line">{{line.line}}</pre>
         </div>
       </div>
       <div layout ng-if="key === 'player'">

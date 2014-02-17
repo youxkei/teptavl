@@ -144,13 +144,13 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         if (message.enter)
         {
             $scope.windows.players.names[message.id] = message.playerName;
-            $scope.windows.system.lines.push({ item: "IN : " + message.playerName });
+            $scope.windows.system.lines.push({ line: "IN : " + message.playerName });
         }
 
         if (message.leave)
         {
             delete $scope.windows.players.names[message.id];
-            $scope.windows.system.lines.push({ item: "OUT: " + message.playerName });
+            $scope.windows.system.lines.push({ line: "OUT: " + message.playerName });
         }
 
         if (message.changeName)
@@ -178,7 +178,7 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         if (message.talk)
         {
             $scope.windows.players.names[message.id] = message.playerName;
-            $scope.windows[message.window].lines.push({ item: message.playerName + ": " + message.input });
+            $scope.windows[message.window].lines.push({ name: message.playerName, line: message.input });
             delete $scope.windows[message.window].typings[message.id];
             se.play();
         }
