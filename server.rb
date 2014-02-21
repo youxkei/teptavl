@@ -11,10 +11,10 @@ EventMachine::WebSocket.start(:host => '0.0.0.0', :port => "8864") { |socket|
     playerName = ""
 
     socket.onopen {
-        clients.push(socket);
+        clients.push(socket)
 
         chat_log.each { |log|
-            socket.send(log);
+            socket.send(log)
         }
     }
 
@@ -25,13 +25,15 @@ EventMachine::WebSocket.start(:host => '0.0.0.0', :port => "8864") { |socket|
 
         msg = JSON.parse(msg_json)
         id = msg["id"]
-        playerName = msg["playerName"];
+        playerName = msg["playerName"]
 
-        chat_log.push(msg_json) unless msg["trivial"]
+        msg["log"] = true
+
+        chat_log.push(msg.to_json) unless msg["trivial"]
     }
 
     socket.onclose {
-        clients.delete(socket);
+        clients.delete(socket)
 
         leave_log = { leave: true,
                          id: id,
