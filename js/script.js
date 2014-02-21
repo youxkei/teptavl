@@ -3,39 +3,8 @@ Number.prototype.clamp = function(min, max)
     return Math.min(Math.max(this, min), max);
 };
 
-var app = angular.module('app', ["LocalStorageModule"]);
 
-app.factory('TeptavlService', function()
-{
-    var service = {};
-
-    var socket = new WebSocket(location.protocol === "file:" ? "ws://localhost:8864"
-                                                             : "ws://153.121.44.200:8864");
-
-    socket.onmessage = function(message)
-    {
-        service.onmessage(JSON.parse(message.data));
-    };
-
-    socket.onopen = function()
-    {
-        service.onopen();
-    };
-
-    socket.onclose = function()
-    {
-        alert("close");
-    };
-
-    service.send = function(message)
-    {
-        socket.send(JSON.stringify(message));
-    };
-
-    service.id = Math.random().toString();
-
-    return service;
-});
+var app = angular.module('app', ["LocalStorageModule", "angular-websocket"]);
 
 app.directive('window', function()
 {
@@ -120,27 +89,34 @@ app.directive('autoScroll', function()
     };
 });
 
-app.config(["localStorageServiceProvider", function(localStorageServiceProvider)
+
+app.config(function(WebSocketProvider, localStorageServiceProvider)
 {
+    WebSocketProvider.prefix("")
+                     .uri(location.protocol === "file:" ? "ws://localhost:8864"
+                                                        : "ws://153.121.44.200:8864");
     localStorageServiceProvider.setPrefix("teptavl");
-}]);
+});
 
 
 
-function TeptavlCtrl($scope, localStorageService, TeptavlService)
+function TeptavlCtrl($scope, WebSocket, localStorageService)
 {
     var se = document.getElementById("se");
+    var id = Math.random().toString();
 
-    $scope.windows = { system: { title: "システム", lines: [],                        layout: { x:   0, y:   0, width: 256, height: 256 } },
+    $scope.windows = { system: { title: "システム", lines: [],                         layout: { x:   0, y:   0, width: 256, height: 256 } },
                          main: { title: "メイン",   lines: [], input: "", typings: {}, layout: { x: 256, y:   0, width: 256, height: 256 } },
                           sub: { title: "サブ",     lines: [], input: "", typings: {}, layout: { x: 512, y:   0, width: 256, height: 256 } },
-                       player: { title: "PL名",     name: "ななしな",                 layout: { x: 0,   y: 256, width: 128, height: 64  } },
-                      players: { title: "PL達",     names: {},                        layout: { x: 0,   y: 320, width: 128, height: 256 } } };
+                       player: { title: "PL名",     name: "ななしな",                  layout: { x: 0,   y: 256, width: 128, height: 64  } },
+                      players: { title: "PL達",     names: {},                         layout: { x: 0,   y: 320, width: 128, height: 256 } } };
 
     loadFromStorage($scope, localStorageService);
 
-    TeptavlService.onmessage = function(message)
+    WebSocket.onmessage(function(ev)
     {
+        message = JSON.parse(ev.data);
+
         if (message.enter)
         {
             $scope.windows.players.names[message.id] = message.playerName;
@@ -184,14 +160,14 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         }
 
         $scope.$apply();
-    };
+    });
 
-    TeptavlService.onopen = function()
+    WebSocket.onopen(function()
     {
-        TeptavlService.send({  enter: true,
-                                  id: TeptavlService.id,
-                          playerName: $scope.windows.player.name });
-    };
+        WebSocket.send(JSON.stringify({  enter: true,
+                                            id: id,
+                                    playerName: $scope.windows.player.name }));
+    });
 
     $scope.inputKeyDown = function(window, keyEvent)
     {
@@ -199,11 +175,11 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
         {
             if ($scope.windows[window].input !== "")
             {
-                TeptavlService.send({ talk: true,
-                                    window: window,
-                                        id: TeptavlService.id,
-                                playerName: $scope.windows.player.name,
-                                     input: $scope.windows[window].input });
+                WebSocket.send(JSON.stringify({ talk: true,
+                                              window: window,
+                                                  id: id,
+                                          playerName: $scope.windows.player.name,
+                                               input: $scope.windows[window].input }));
 
                 $scope.windows[window].input = "";
             }
@@ -216,28 +192,28 @@ function TeptavlCtrl($scope, localStorageService, TeptavlService)
     {
         if (keyEvent.target.value !== "")
         {
-            TeptavlService.send({ typingStart: true,
-                                      trivial: true,
-                                       window: window,
-                                           id: TeptavlService.id,
-                                   playerName: $scope.windows.player.name });
+            WebSocket.send(JSON.stringify({ typingStart: true,
+                                                trivial: true,
+                                                 window: window,
+                                                     id: id,
+                                             playerName: $scope.windows.player.name }));
         }
         else
         {
-            TeptavlService.send({ typingStop: true,
-                                     trivial: true,
-                                      window: window,
-                                          id: TeptavlService.id,
-                                  playerName: $scope.windows.player.name });
+            WebSocket.send(JSON.stringify({ typingStop: true,
+                                               trivial: true,
+                                                window: window,
+                                                    id: id,
+                                            playerName: $scope.windows.player.name }));
         }
     }
 
     $scope.playerNameKeyUp = function(window, keyEvent)
     {
-        TeptavlService.send({  changeName: true,
-                                  trivial: true,
-                                       id: TeptavlService.id,
-                               playerName: keyEvent.target.value });
+        WebSocket.send(JSON.stringify({  changeName: true,
+                                            trivial: true,
+                                                 id: id,
+                                         playerName: keyEvent.target.value }));
     }
 
     $(function()
