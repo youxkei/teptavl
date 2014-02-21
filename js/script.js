@@ -113,6 +113,11 @@ function TeptavlCtrl($scope, WebSocket, localStorageService)
 
     loadFromStorage($scope, localStorageService);
 
+    function send(message)
+    {
+        WebSocket.send(JSON.stringify(message));
+    }
+
     WebSocket.onmessage(function(ev)
     {
         message = JSON.parse(ev.data);
@@ -164,9 +169,9 @@ function TeptavlCtrl($scope, WebSocket, localStorageService)
 
     WebSocket.onopen(function()
     {
-        WebSocket.send(JSON.stringify({  enter: true,
-                                            id: id,
-                                    playerName: $scope.windows.player.name }));
+        send({ enter: true,
+                  id: id,
+          playerName: $scope.windows.player.name });
     });
 
     $scope.inputKeyDown = function(window, keyEvent)
@@ -175,11 +180,11 @@ function TeptavlCtrl($scope, WebSocket, localStorageService)
         {
             if ($scope.windows[window].input !== "")
             {
-                WebSocket.send(JSON.stringify({ talk: true,
-                                              window: window,
-                                                  id: id,
-                                          playerName: $scope.windows.player.name,
-                                               input: $scope.windows[window].input }));
+                send({ talk: true,
+                     window: window,
+                         id: id,
+                 playerName: $scope.windows.player.name,
+                      input: $scope.windows[window].input });
 
                 $scope.windows[window].input = "";
             }
@@ -192,28 +197,28 @@ function TeptavlCtrl($scope, WebSocket, localStorageService)
     {
         if (keyEvent.target.value !== "")
         {
-            WebSocket.send(JSON.stringify({ typingStart: true,
-                                                trivial: true,
-                                                 window: window,
-                                                     id: id,
-                                             playerName: $scope.windows.player.name }));
+            send({ typingStart: true,
+                       trivial: true,
+                        window: window,
+                            id: id,
+                    playerName: $scope.windows.player.name });
         }
         else
         {
-            WebSocket.send(JSON.stringify({ typingStop: true,
-                                               trivial: true,
-                                                window: window,
-                                                    id: id,
-                                            playerName: $scope.windows.player.name }));
+            send({ typingStop: true,
+                      trivial: true,
+                       window: window,
+                           id: id,
+                   playerName: $scope.windows.player.name });
         }
     }
 
     $scope.playerNameKeyUp = function(window, keyEvent)
     {
-        WebSocket.send(JSON.stringify({  changeName: true,
-                                            trivial: true,
-                                                 id: id,
-                                         playerName: keyEvent.target.value }));
+        send({  changeName: true,
+                   trivial: true,
+                        id: id,
+                playerName: keyEvent.target.value });
     }
 
     $(function()
