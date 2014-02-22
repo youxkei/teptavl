@@ -7,9 +7,9 @@ require "moji"
 
 
 class DiceParser < Parslet::Parser
-    rule(:space) { match('\s').repeat }
+    rule(:space) { match('\s|　').repeat }
 
-    rule(:input) { ( prim.absent? >> any ).repeat >> add }
+    rule(:input) { space >> add >> any.repeat }
 
     rule(:add)  {  mul.as(:lhs) >> space >> match("[+＋]").as(:add) >> space >> add.as(:rhs) |
                    mul.as(:lhs) >> space >> match("[-ー]").as(:sub) >> space >> add.as(:rhs) |
@@ -77,12 +77,14 @@ calculator = DiceCalculator.new
 
 EM.run do
     id = rand.to_s
+    playerName = "ダイス代数"
+
     socket = Faye::WebSocket::Client.new "ws://localhost:8864"
 
     socket.on :open do
         socket.send({ enter: true,
                          id: id,
-                 playerName: "サイコロでサイ転ぶ" }.to_json)
+                 playerName: playerName}.to_json)
     end
 
     socket.on :close do
@@ -92,18 +94,20 @@ EM.run do
     socket.on :message do |ev|
         msg = JSON.parse(ev.data)
         
-        if msg["talk"] and !msg["log"] then
+        if msg["talk"] and !msg["log"] and msg["id"] != id then
             input = msg["input"]
 
             begin
                 result = calculator.apply(parser.parse(input))
-                input = "#{result[:src]} = #{result[:throwed]} = #{result[:result]}"
+                if result[:src] != result[:throwed] then
+                    input = "#{result[:src]} = #{result[:throwed]} = #{result[:result]}"
 
-                socket.send({ talk: true,
-                            window: msg["window"],
-                                id: id,
-                        playerName: "サイコロでサイ転ぶ",
-                             input: input }.to_json);
+                    socket.send({ talk: true,
+                                window: msg["window"],
+                                    id: id,
+                            playerName: playerName,
+                                 input: input }.to_json);
+                end
             rescue
             end
         end
