@@ -35,7 +35,9 @@ html(ng-app="app")
 
             div(layout ng-if="key === 'system'")
                 div.lines(data-options="region: 'center'" auto-scroll)
-                    pre.line(ng-repeat="line in windowInfo.lines") {{line.line}}
+                    div(ng-repeat="line in windowInfo.lines")
+                        pre.line(ng-if="line.enter") IN : {{line.playerName}}
+                        pre.line(ng-if="line.leave") OUT: {{line.playerName}}
 
             div(layout ng-if="key === 'player'")
                 div(data-options="region: 'center'")

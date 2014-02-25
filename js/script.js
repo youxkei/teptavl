@@ -125,13 +125,13 @@ function TeptavlCtrl($scope, WebSocket, localStorageService)
         if (message.enter)
         {
             $scope.windows.players.names[message.id] = message.playerName;
-            $scope.windows.system.lines.push({ line: "IN : " + message.playerName });
+            $scope.windows.system.lines.push({ enter: true, playerName: message.playerName });
         }
 
         if (message.leave)
         {
             delete $scope.windows.players.names[message.id];
-            $scope.windows.system.lines.push({ line: "OUT: " + message.playerName });
+            $scope.windows.system.lines.push({ leave: true, playerName: message.playerName });
         }
 
         if (message.changeName)
