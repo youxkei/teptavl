@@ -32,20 +32,20 @@ parser = DiceParser.new
 
 class DiceCalculator < Parslet::Transform
     rule(:lhs => subtree(:lhs), :add => simple(:_), :rhs => subtree(:rhs)) { { src: "#{lhs[:src]} + #{rhs[:src]}",
-                                                                         throwed: "#{lhs[:throwed]} + #{rhs[:throwed]}",
-                                                                          result: lhs[:result] + rhs[:result] } }
+                                                                           throwed: "#{lhs[:throwed]} + #{rhs[:throwed]}",
+                                                                            result: lhs[:result] + rhs[:result] } }
 
     rule(:lhs => subtree(:lhs), :sub => simple(:_), :rhs => subtree(:rhs)) { { src: "#{lhs[:src]} - #{rhs[:src]}",
-                                                                         throwed: "#{lhs[:throwed]} - #{rhs[:throwed]}",
-                                                                          result: lhs[:result] - rhs[:result] } }
+                                                                           throwed: "#{lhs[:throwed]} - #{rhs[:throwed]}",
+                                                                            result: lhs[:result] - rhs[:result] } }
 
     rule(:lhs => subtree(:lhs), :mul => simple(:_), :rhs => subtree(:rhs)) { { src: "#{lhs[:src]} * #{rhs[:src]}",
-                                                                         throwed: "#{lhs[:throwed]} * #{rhs[:throwed]}",
-                                                                          result: lhs[:result] * rhs[:result] } }
+                                                                           throwed: "#{lhs[:throwed]} * #{rhs[:throwed]}",
+                                                                            result: lhs[:result] * rhs[:result] } }
 
     rule(:lhs => subtree(:lhs), :div => simple(:_), :rhs => subtree(:rhs)) { { src: "#{lhs[:src]} / #{rhs[:src]}",
-                                                                         throwed: "#{lhs[:throwed]} / #{rhs[:throwed]}",
-                                                                          result: lhs[:result] / rhs[:result] } }
+                                                                           throwed: "#{lhs[:throwed]} / #{rhs[:throwed]}",
+                                                                            result: lhs[:result] / rhs[:result] } }
 
     rule(:num_include_zen => simple(:num_include_zen)) {
         num_han = Moji.zen_to_han(num_include_zen.to_s)
